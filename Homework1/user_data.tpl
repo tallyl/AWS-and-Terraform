@@ -30,8 +30,7 @@ Region:            $AWS_REGION
 Availability Zone: $AWS_AZ
 Instance ID:       $INSTANCE_ID
 IP:                $PRIVATE_IP
-Instance Name:     ${deployment_name}
-"
+Instance Name:     ${deployment_name}"
 
 # ------------------------------------
 # Get oracle SecretString and change password
@@ -59,7 +58,7 @@ echo ""
 # Get root SecretString and change password
 # ------------------------------------
 #echo ""
-#echo "Retriving root password from Secrets Manager ..."
+#echo "Retrieving root password from Secrets Manager ..."
 #root_password=$(aws secretsmanager get-secret-value --secret-id ec2-root-password | jq --raw-output '.SecretString' | jq -r .root)
 #echo ""
 #echo "Setting password for user root ..."
@@ -77,13 +76,12 @@ function terminate() {
 # ------------------------------------
 # SSH PasswordAuthentication
 # ------------------------------------
-echo ""
-echo "Set SSH PasswordAuthentication ..."
-sed -i "/^[^#]*PasswordAuthentication[[:space:]]no/c\PasswordAuthentication yes" /etc/ssh/sshd_config
-echo "Restarting SSH service ..."
-service sshd restart
-"
+# echo ""
+# echo "Set SSH PasswordAuthentication ..."
+# sed -i "/^[^#]*PasswordAuthentication[[:space:]]no/c\PasswordAuthentication yes" /etc/ssh/sshd_config
+# echo "Restarting SSH service ..."
+#service sshd restart
+
 
 echo ""
-send_log_to_sns "User data completed"
 echo "user data script completed at $(date) ..."
