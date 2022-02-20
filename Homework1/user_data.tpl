@@ -32,9 +32,17 @@ Instance ID:       $INSTANCE_ID
 IP:                $PRIVATE_IP
 Instance Name:     ${deployment_name}"
 
-# ------------------------------------
-# Get oracle SecretString and change password
-# ------------------------------------
+
+
+
+sudo mkfs -t xfs /dev/nvme1n1
+sudo mkdir /ebs
+sudo mount /dev/nvme1n1 /ebs
+ID=`sudo blkid | grep nvme1n1 | awk  -F\" '{print $2}'\n`
+sudo echo "UUID=${ID}  /ebs  xfs  defaults,nofail  0  2" >>  /etc/fstab
+sudo mount -a
+
+
 sudo yum install -y epel-release
 sudo yum install -y -q  nginx
 

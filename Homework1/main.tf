@@ -116,6 +116,7 @@ resource "aws_instance" "instance_1" {
 }
 
 resource "aws_ebs_volume" "volume_1" {
+  
   availability_zone = "eu-west-1b"
   encrypted   = true
   type = "gp2"
