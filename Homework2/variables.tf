@@ -53,18 +53,18 @@ variable "private_subnets" {
 }
 
 
-
 variable "forwarding_config" {
+  default = {
+      80        =   "HTTP"
+  }
+}
+
+/*variable "forwarding_config" {
   default = {
       80        =   "TCP"
       443       =   "TCP" # and so on
   }
-}
-
-
-variable "nlb_tcp_ports" {
-  default = ["80", "443" ]
-}
+}*/
 
 locals {
   deployment_name="opsschool-HW-two"
@@ -98,17 +98,6 @@ locals {
       cidr_blocks = ["84.229.153.195/32","10.1.10.0/23","10.1.0.0/23"]
     },
   ]
-
-  /*
-  instance_ports_combo = [
-    # in pair, element zero is a network and element one is a subnet,
-    # in all unique combinations.
-    for pair in setproduct(range(length(var.forwarding_config)),range(var.web_instance_count)) : {
-      target_group_arn = pair[0]
-      target_id  = pair[1]
-
-    }
-  ]*/
 
 }
 

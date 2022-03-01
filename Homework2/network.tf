@@ -7,6 +7,8 @@ resource "aws_internet_gateway" "tally-igw" {
 
 }
 
+
+// do I need to fix one route table (public) associated to all public subnets ?
 resource "aws_route_table" "tally-public-rt" {
     count =  length(var.public_subnets)
     vpc_id = "${aws_vpc.tally-vpc.id}"
@@ -53,7 +55,7 @@ resource "aws_security_group" "security_group" {
 
 resource "aws_security_group_rule" "egress_rule" {
   type              = "egress"
-  description       = "Allow ANY"
+  description       = "allow outbound traffic to anywhere"
   from_port         = 0
   to_port           = 0
   protocol          = "-1"
@@ -86,9 +88,6 @@ resource "aws_eip" "nat" {
     )
 
 }
-
-
-
 
 resource "aws_nat_gateway" "tally-nat-gw" {
   count =   length(var.azs)

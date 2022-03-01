@@ -60,6 +60,7 @@ resource "aws_instance" "web_server" {
   key_name               = aws_key_pair.ssh_key.key_name
   user_data              = data.template_cloudinit_config.user_data.rendered
   vpc_security_group_ids = [aws_security_group.security_group.id]
+  associate_public_ip_address = true
 
   tags = merge(
     local.common_tags, {"Name" = "${local.deployment_name}-webserver_${count.index}"}

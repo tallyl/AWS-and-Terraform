@@ -1,11 +1,11 @@
 
 resource "aws_lb" "public_load_balancer" {
   name               = "${local.deployment_name}--nlb"
-  load_balancer_type = "network"
+  load_balancer_type = "application"
   enable_cross_zone_load_balancing = true
   internal = false
   subnets = aws_subnet.tally-subnet-public[*].id
-
+  security_groups = [aws_security_group.security_group.id]
   idle_timeout = 5
 
   //  subnet_mapping {
@@ -48,35 +48,23 @@ resource "aws_lb_target_group" "tg" {
     vpc_id                = aws_vpc.tally-vpc.id
     target_type           = "instance"
     deregistration_delay    = 90
-health_check {
+
+  health_check {
+    enabled = true
+    path    = "/"
+  }
+/*health_check {
     interval            = 30
     port                = "traffic-port" //each.value != "TCP_UDP" ? each.key : 80
     protocol            = "TCP"
     healthy_threshold   = 3
     unhealthy_threshold = 3
-  }
+  }*/
   tags = merge(
     local.common_tags, {"Name" = "${local.deployment_name}--nlb-tg"}
 
      )
 }
-
-
-
-//locals {
-
-
-  # in pair, element zero is a port and element one is a instance,
-  # in all unique combinations.
-
-  // instance_ports_combo =  {
-  //   for pair in setproduct(range(length(var.forwarding_config)),range(length(aws_instance.web_server))) : "${pair[0]} ${pair[1]}" => {
-  //     port = pair[0]
-  //     target_id        = pair[1]
-  //   }
-  // }
-
-
 
 resource "aws_alb_target_group_attachment" "target_group" {
   for_each = {
