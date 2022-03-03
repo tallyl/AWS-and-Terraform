@@ -1,11 +1,11 @@
 
 resource "aws_lb" "public_load_balancer" {
-  name               = "${local.deployment_name}--nlb"
+  name               = "${var.deployment_name}--nlb"
   load_balancer_type = "application"
   enable_cross_zone_load_balancing = true
   internal = false
-  subnets = aws_subnet.tally-subnet-public[*].id
-  security_groups = [aws_security_group.security_group.id]
+  subnets = var.public_subnets[*].id
+  security_groups = [var.sg_id]
   idle_timeout = 5
 
   //  subnet_mapping {
@@ -14,7 +14,7 @@ resource "aws_lb" "public_load_balancer" {
   //}
 
   tags = merge(
-    local.common_tags, {"Name" = "${local.deployment_name}-nlb"}
+    var.common_tags, {"Name" = "${var.deployment_name}-nlb"}
 
      )
 }
@@ -33,7 +33,7 @@ resource "aws_lb_listener" "lb_listener" {
   }
 
   tags = merge(
-    local.common_tags, {"Name" = "${local.deployment_name}-nlb--listener"}
+    var.common_tags, {"Name" = "${var.deployment_name}-nlb--listener"}
 
      )
 }
@@ -42,12 +42,16 @@ resource "aws_lb_listener" "lb_listener" {
 
 resource "aws_lb_target_group" "tg" {
   for_each = var.forwarding_config
-    name                  = "${local.deployment_name}-${each.key}--tg"
+    name                  = "${var.deployment_name}-${each.key}--tg"
     port                  = each.key
     protocol              = each.value
-    vpc_id                = aws_vpc.tally-vpc.id
+    vpc_id                = var.vpc_id
     target_type           = "instance"
     deregistration_delay    = 90
+    stickiness {
+      type = "lb_cookie"
+      cookie_duration = 60
+  }
 
   health_check {
     enabled = true
@@ -61,18 +65,18 @@ resource "aws_lb_target_group" "tg" {
     unhealthy_threshold = 3
   }*/
   tags = merge(
-    local.common_tags, {"Name" = "${local.deployment_name}--nlb-tg"}
+    var.common_tags, {"Name" = "${var.deployment_name}--nlb-tg"}
 
      )
 }
 
 resource "aws_alb_target_group_attachment" "target_group" {
   for_each = {
-    for pair in setproduct(keys(var.forwarding_config ),range(length(aws_instance.web_server))) : "${pair[0]} ${pair[1]}" => {
+    for pair in setproduct(keys(var.forwarding_config ),range(length(var.web_servers))) : "${pair[0]} ${pair[1]}" => {
       target_group_arn = pair[0]
       target_id        = pair[1]
     }
   }
   target_group_arn = aws_lb_target_group.tg[each.value.target_group_arn].arn
-  target_id        = aws_instance.web_server[each.value.target_id].id
+  target_id        = var.web_servers[each.value.target_id].id
 }

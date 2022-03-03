@@ -1,18 +1,18 @@
 resource "aws_vpc" "tally-vpc" {
-  cidr_block       = "10.0.0.0/16"
+  cidr_block       = var.vpc_cidr_block
   instance_tenancy = "default"
   enable_dns_support = "true"   # gives you an internal domain name
   enable_dns_hostnames = "true" # gives you an internal host name
   enable_classiclink = "false"
 
    tags = merge(
-      local.common_tags, {"Name" = "${local.deployment_name}-vpc-opschool"}
+      var.common_tags, {"Name" = "${var.deployment_name}-vpc-opschool"}
 
     )
 
 }
 
-resource "aws_subnet" "tally-subnet-public" {
+resource "aws_subnet" "subnet-public" {
   count =  length(var.public_subnets)
   cidr_block                      = element(concat(var.public_subnets, [""]), count.index) // trick for count=0
   availability_zone               = element(var.azs, count.index)
@@ -20,13 +20,13 @@ resource "aws_subnet" "tally-subnet-public" {
   map_public_ip_on_launch = "true" # Makes this a public subnet
 
     tags = merge(
-      local.common_tags, {"Name" = "${local.deployment_name}-subnet-public-${var.azs[count.index]}"}
+      var.common_tags, {"Name" = "${var.deployment_name}-subnet-public-${var.azs[count.index]}"}
 
     )
 
 }
 
-resource "aws_subnet" "tally-subnet-private" {
+resource "aws_subnet" "subnet-private" {
   count =  length(var.private_subnets)
   cidr_block                      = element(concat(var.private_subnets, [""]), count.index)
   availability_zone               = element(var.azs, count.index)
@@ -34,7 +34,7 @@ resource "aws_subnet" "tally-subnet-private" {
   map_public_ip_on_launch = "false" # Makes this a public subnet
 
     tags = merge(
-      local.common_tags, {"Name" = "${local.deployment_name}-subnet-private-${var.azs[count.index]}"}
+      var.common_tags, {"Name" = "${var.deployment_name}-subnet-private-${var.azs[count.index]}"}
 
     )
 

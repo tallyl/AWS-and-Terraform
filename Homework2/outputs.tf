@@ -1,40 +1,50 @@
 output "webserver_id" {
   description = "ID of the EC2 instance"
-  value       = aws_instance.web_server[*].id
+  value       = module.ec2_app.webserver_id
 }
 
 output "dbserver_id" {
   description = "ID of the EC2 instance"
-  value       = aws_instance.db_server[*].id
+  value       = module.ec2_app.dbserver_id
 }
 
 
 output "webserver_public_ip" {
   description = "Public IP address of the EC2 instance"
-  value       = aws_instance.web_server[*].public_ip
+  value       = module.ec2_app.webserver_public_ip
 }
 
 output "dbserver_private_ip" {
   description = "Public IP address of the EC2 instance"
-  value       = aws_instance.db_server[*].private_ip
+  value       = module.ec2_app.dbserver_private_ip
+}
+
+output "aws_dbserver" {
+  value = module.ec2_app.db_server
+}
+
+output "aws_webserver" {
+  value = module.ec2_app.web_server
 }
 
 output "nlb_access_ip" {
-  value       = aws_lb.public_load_balancer.dns_name
+  value       = module.create_alb.nlb_access_ip
 }
 
 
+output "vpc_id" {
+   value = module.create_vpc.vpc_id
+}
 
-//output "locals" {
-//  value = length(var.forwarding_config)
-//}
+output "vpc" {
+   value = module.create_vpc
+}
 
 
+output "private_subnet" {
+  value = module.create_vpc.private_subnet
+}
 
-//output "num_server" {
-//  value = length(aws_instance.web_server)
-//}
-
-//output "tg" {
-//  value = aws_lb_target_group.tg
-//}
+output "public_subnet" {
+  value = module.create_vpc.public_subnet
+}

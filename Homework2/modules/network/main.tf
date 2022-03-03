@@ -1,8 +1,8 @@
 resource "aws_internet_gateway" "tally-igw" {
-    vpc_id = "${aws_vpc.tally-vpc.id}"
+    vpc_id = var.vpc_id
 
      tags = merge(
-      local.common_tags, {"Name" = "${local.deployment_name}-igw"}
+      var.common_tags, {"Name" = "${var.deployment_name}-igw"}
      )
 
 }
@@ -11,7 +11,7 @@ resource "aws_internet_gateway" "tally-igw" {
 // do I need to fix one route table (public) associated to all public subnets ?
 resource "aws_route_table" "tally-public-rt" {
     count =  length(var.public_subnets)
-    vpc_id = "${aws_vpc.tally-vpc.id}"
+    vpc_id = var.vpc_id
 
     route {
         //associated subnet can reach everywhere
@@ -21,34 +21,27 @@ resource "aws_route_table" "tally-public-rt" {
     }
 
     tags = merge(
-      local.common_tags, {"Name" = "${local.deployment_name}-rt-public-${count.index}"}
+      var.common_tags, {"Name" = "${var.deployment_name}-rt-public-${count.index}"}
      )
 
 }
 
 resource "aws_route_table_association" "tally-rt-public-subnet"{
     count = length(var.public_subnets)
-    subnet_id = "${aws_subnet.tally-subnet-public[count.index].id}"
+    subnet_id = var.public_subnets[count.index].id
     route_table_id = "${aws_route_table.tally-public-rt[count.index].id}"
 }
-
-/*resource "aws_route_table_association" "tally-rt-public-subnet-2"{
-    subnet_id = "${aws_subnet.tally-subnet-public-2.id}"
-    route_table_id = "${aws_route_table.tally-public-rt.id}"
-}*/
-
-
 
 # ------------------------------------
 # Security Group
 # ------------------------------------
 resource "aws_security_group" "security_group" {
-  name_prefix	= "${local.deployment_name}-sg-"
-  vpc_id	    = aws_vpc.tally-vpc.id
-  description	= "${local.deployment_name}-sg"
+  name_prefix	= "${var.deployment_name}-sg-"
+  vpc_id	    = var.vpc_id
+  description	= "${var.deployment_name}-sg"
 
    tags = merge(
-    local.common_tags, {"Name" = "${local.deployment_name}-sg"}
+    var.common_tags, {"Name" = "${var.deployment_name}-sg"}
 
     )
 }
@@ -64,13 +57,13 @@ resource "aws_security_group_rule" "egress_rule" {
 }
 
 resource "aws_security_group_rule" "ingress_rule" {
-  count             = length(local.sg_ingress_rules)
+  count             = length(var.sg_ingress_rules)
   type              = "ingress"
-  description       = lookup(local.sg_ingress_rules[count.index], "description")
-  from_port         = lookup(local.sg_ingress_rules[count.index], "from_port")
-  to_port           = lookup(local.sg_ingress_rules[count.index], "to_port")
-  protocol          = lookup(local.sg_ingress_rules[count.index], "protocol")
-  cidr_blocks       = lookup(local.sg_ingress_rules[count.index], "cidr_blocks")
+  description       = lookup(var.sg_ingress_rules[count.index], "description")
+  from_port         = lookup(var.sg_ingress_rules[count.index], "from_port")
+  to_port           = lookup(var.sg_ingress_rules[count.index], "to_port")
+  protocol          = lookup(var.sg_ingress_rules[count.index], "protocol")
+  cidr_blocks       = lookup(var.sg_ingress_rules[count.index], "cidr_blocks")
   security_group_id = aws_security_group.security_group.id
 }
 
@@ -83,7 +76,7 @@ resource "aws_eip" "nat" {
   vpc = true
 
    tags = merge(
-      local.common_tags, {"Name" = "${local.deployment_name}-nat-eip-${var.azs[count.index]}"}
+      var.common_tags, {"Name" = "${var.deployment_name}-nat-eip-${var.azs[count.index]}"}
 
     )
 
@@ -93,13 +86,12 @@ resource "aws_nat_gateway" "tally-nat-gw" {
   count =   length(var.azs)
 
   allocation_id = element( split(",",  join(",", aws_eip.nat.*.id), ), count.index)
-  subnet_id = element(
-    aws_subnet.tally-subnet-public.*.id,
+  subnet_id = element(var.public_subnets.*.id,
     count.index,
   )
 
   tags = merge(
-      local.common_tags, {"Name" = "${local.deployment_name}-nat-gw-${var.azs[count.index]}"}
+      var.common_tags, {"Name" = "${var.deployment_name}-nat-gw-${var.azs[count.index]}"}
 
     )
 
@@ -109,10 +101,10 @@ resource "aws_nat_gateway" "tally-nat-gw" {
 resource "aws_route_table" "tally-private-rt" {
   count =  length(var.azs)
 
-  vpc_id = "${aws_vpc.tally-vpc.id}"
+  vpc_id = var.vpc_id
 
    tags = merge(
-      local.common_tags, {"Name" = "${local.deployment_name}-rt-private-${count.index}"}
+      var.common_tags, {"Name" = "${var.deployment_name}-rt-private-${count.index}"}
      )
 
   lifecycle {
@@ -126,7 +118,7 @@ resource "aws_route_table" "tally-private-rt" {
 resource "aws_route_table_association" "tally-rt-private-subnet" {
   count =  length(var.private_subnets)
 
-  subnet_id = element(aws_subnet.tally-subnet-private.*.id, count.index)
+  subnet_id = element(var.private_subnets.*.id, count.index)
   route_table_id = element(aws_route_table.tally-private-rt.*.id, count.index)
 }
 
