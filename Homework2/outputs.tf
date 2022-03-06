@@ -48,3 +48,8 @@ output "private_subnet" {
 output "public_subnet" {
   value = module.create_vpc.public_subnet
 }
+
+output "nlb_dns" {
+  value       = module.create_alb.nlb_access_ip
+}
+

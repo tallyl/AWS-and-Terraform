@@ -6,7 +6,7 @@ resource "aws_lb" "public_load_balancer" {
   internal = false
   subnets = var.public_subnets[*].id
   security_groups = [var.sg_id]
-  idle_timeout = 5
+  idle_timeout = 60
 
   //  subnet_mapping {
   //  subnet_id     = lookup(var.nlb_config,"subnet")
