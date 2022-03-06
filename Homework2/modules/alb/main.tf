@@ -5,7 +5,7 @@ resource "aws_lb" "public_load_balancer" {
   enable_cross_zone_load_balancing = true
   internal = false
   subnets = var.public_subnets[*].id
-  security_groups = [var.sg_id]
+  security_groups = [aws_security_group.alb_sg.id]
   idle_timeout = 60
 
   //  subnet_mapping {
@@ -80,3 +80,37 @@ resource "aws_alb_target_group_attachment" "target_group" {
   target_group_arn = aws_lb_target_group.tg[each.value.target_group_arn].arn
   target_id        = var.web_servers[each.value.target_id].id
 }
+
+
+resource "aws_security_group" "alb_sg" {
+  name_prefix	= "${var.deployment_name}-alb-sg-"
+  vpc_id	    = var.vpc_id
+  description	= "${var.deployment_name}-alb-sg"
+
+   tags = merge(
+    var.common_tags, {"Name" = "${var.deployment_name}-sg"}
+
+    )
+}
+
+resource "aws_security_group_rule" "egress_rule" {
+  type              = "egress"
+  description       = "allow outbound traffic to anywhere"
+  from_port         = 0
+  to_port           = 0
+  protocol          = "-1"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.alb_sg.id
+}
+
+resource "aws_security_group_rule" "ingress_rule" {
+  type              = "ingress"
+  description       = lookup(var.sg_rules, "description")
+  from_port         = lookup(var.sg_rules, "from_port")
+  to_port           = lookup(var.sg_rules, "to_port")
+  protocol          = lookup(var.sg_rules, "protocol")
+  cidr_blocks       = lookup(var.sg_rules, "cidr_blocks")
+  security_group_id = aws_security_group.alb_sg.id
+}
+
+

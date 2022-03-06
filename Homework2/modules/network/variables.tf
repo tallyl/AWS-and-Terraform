@@ -36,7 +36,7 @@ variable "common_tags" {
   }
 
 
-
+variable "alb_sg" {}
 
 
 

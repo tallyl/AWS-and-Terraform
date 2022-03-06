@@ -69,11 +69,11 @@ resource "aws_security_group_rule" "ingress_rule" {
 
 resource "aws_security_group_rule" "ingress_rule_for_alb" {
   type              = "ingress"
-  description       = "strabge rule to make the alb work "
+  description       = "strange rule to make the alb work "
   from_port         = 80
   to_port           = 80
   protocol          = "tcp"
-  source_security_group_id = aws_security_group.security_group.id
+  source_security_group_id = var.alb_sg
   security_group_id = aws_security_group.security_group.id
 }
 

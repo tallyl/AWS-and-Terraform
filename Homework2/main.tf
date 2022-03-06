@@ -16,6 +16,7 @@ module "create_network" {
   public_subnets = module.create_vpc.public_subnet
   deployment_name = var.deployment_name
   vpc_id = module.create_vpc.vpc_id
+  alb_sg = module.create_alb.alb_sg
 }
 
 module "create_iam" {
@@ -53,4 +54,5 @@ module "create_alb" {
   sg_id = module.create_network.nginix_sg_id
   common_tags = var.common_tags
   vpc_id = module.create_vpc.vpc_id
+  sg_rules = var.sg_ingress_rules[1]
 }
