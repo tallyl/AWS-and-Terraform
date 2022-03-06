@@ -68,13 +68,13 @@ mkdir -p ~/.aws
 
 cat > ~/.aws/config << EOF
 [default]
-region = "$${AWS_REGION}"
+region = $${AWS_REGION}
 EOF
 
-#cront=$(crontab -e)
-(crontab -l && echo "00 *  * * *  aws s3 cp /var/log/nginx/access.log s3://${bucket_name}/") | crontab -
-(crontab -l && echo "00 *  * * *  aws s3 cp /var/log/nginx/access.log s3://${bucket_name}/") | crontab -
-#echo "00 *  * * *  aws s3 cp /var/log/nginx/access.log s3://${bucket_name}/" >> $cront
+
+
+(crontab -l  && echo "00 *  * * *  aws s3 cp /var/log/nginx/access.log s3://${bucket_name}/$${NAME}_access.log") | crontab -
+(crontab -l && echo "00 *  * * *  aws s3 cp /var/log/nginx/access.log s3://${bucket_name}/$${NAME}_access.log/") | crontab -
 
 # ------------------------------------
 # Terminate Function
