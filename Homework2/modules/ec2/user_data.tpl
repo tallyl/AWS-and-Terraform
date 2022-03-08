@@ -19,6 +19,7 @@ export AWS_REGION=$(echo "$AWS_AZ" | sed 's/[a-z]$//')
 export INSTANCE_ID=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)
 export PRIVATE_IP=$(curl -s http://169.254.169.254/latest/meta-data/local-ipv4)
 
+export NAME=$(curl -s http://169.254.169.254/latest/meta-data/hostname)
 # ------------------------------------
 # Instance Information
 # ------------------------------------
@@ -30,10 +31,9 @@ Region:            $AWS_REGION
 Availability Zone: $AWS_AZ
 Instance ID:       $INSTANCE_ID
 IP:                $PRIVATE_IP
-Instance Name:     ${deployment_name}"
-
-
-
+Host name :        $NAME
+Instance Name:     ${deployment_name}
+"
 
 sudo mkfs -t xfs /dev/nvme1n1
 sudo mkdir /ebs
@@ -49,11 +49,11 @@ sudo yum install -y -q  nginx
 sudo systemctl enable nginx
 
 
-sudo mv usr/share/nginx/html/index.html usr/share/nginx/html/index.html.bck
+sudo mv /usr/share/nginx/html/index.html /usr/share/nginx/html/index.html.bck
 echo "<html>
 <header><title>This is title</title></header>
 <body>
-Welcome to Grandpa's Whiskey
+Welcome to Grandpa's Whiskey on host $NAME
 </body>
 </html>
 " > /usr/share/nginx/html/index.html
@@ -62,16 +62,19 @@ sudo systemctl start nginx.service
 echo ""
 
 
-# ------------------------------------
-# Get root SecretString and change password
-# ------------------------------------
-#echo ""
-#echo "Retrieving root password from Secrets Manager ..."
-#root_password=$(aws secretsmanager get-secret-value --secret-id ec2-root-password | jq --raw-output '.SecretString' | jq -r .root)
-#echo ""
-#echo "Setting password for user root ..."
-#echo -e "$root_password" | passwd --stdin root
+sudo yum install -y  awscli
+# Set region for CLI
+mkdir -p ~/.aws
 
+cat > ~/.aws/config << EOF
+[default]
+region = $${AWS_REGION}
+EOF
+
+
+
+(crontab -l  && echo "00 *  * * *  aws s3 cp /var/log/nginx/access.log s3://${bucket_name}/$${NAME}_access.log") | crontab -
+(crontab -l && echo "00 *  * * *  aws s3 cp /var/log/nginx/access.log s3://${bucket_name}/$${NAME}_access.log/") | crontab -
 
 # ------------------------------------
 # Terminate Function
@@ -79,17 +82,6 @@ echo ""
 function terminate() {
   shutdown -h now
 }
-
-
-# ------------------------------------
-# SSH PasswordAuthentication
-# ------------------------------------
-# echo ""
-# echo "Set SSH PasswordAuthentication ..."
-# sed -i "/^[^#]*PasswordAuthentication[[:space:]]no/c\PasswordAuthentication yes" /etc/ssh/sshd_config
-# echo "Restarting SSH service ..."
-#service sshd restart
-
 
 echo ""
 echo "user data script completed at $(date) ..."
