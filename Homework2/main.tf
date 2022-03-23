@@ -21,7 +21,7 @@ module "create_network" {
 
 module "create_iam" {
   source = "./modules/iam"
-  bucket_name = lower("${local.deployment_name}-ngnix-bucket")
+  bucket_name = lower("${local.deployment_name}-bucket")
 }
 
 
