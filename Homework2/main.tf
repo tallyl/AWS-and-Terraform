@@ -47,7 +47,7 @@ module "ec2_app" {
 module "create_alb" {
   source ="./modules/alb"
 
-  deployment_name = local.deployment_name
+  deployment_name = var.deployment_name
   forwarding_config = var.forwarding_config
   web_servers = module.ec2_app.web_server
   public_subnets = module.create_vpc.public_subnet
