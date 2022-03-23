@@ -4,6 +4,7 @@ module "create_vpc" {
   private_subnets = var.private_subnets
   public_subnets = var.public_subnets
   vpc_cidr_block = var.vpc_cidr_block
+  deployment_name = var.deployment_name
   azs = var.azs
 }
 
