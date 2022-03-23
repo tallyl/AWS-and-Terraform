@@ -34,7 +34,7 @@ variable "vpc_cidr_block" {
 }
 
 variable "region" {
-  default = "us-east-1"
+  default = "eu-west-1"
 }
 
 
