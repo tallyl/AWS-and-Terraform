@@ -21,21 +21,21 @@ module "create_network" {
 
 module "create_iam" {
   source = "./modules/iam"
-  bucket_name = lower("${local.deployment_name}-bucket")
+  bucket_name = lower("${var.deployment_name}-bucket")
 }
 
 
 module "ec2_app" {
   source ="./modules/ec2"
   instance_type = var.instance_type
-  deployment_name = local.deployment_name
+  deployment_name = var.deployment_name
   web_ebs_volume_size = var.web_ebs_volume_size
   web_instance_count = var.web_instance_count
   public_subnet_ids = module.create_vpc.public_subnet
   web_sg = module.create_network.nginix_sg_id
   private_subnet_ids = module.create_vpc.private_subnet
   common_tags = var.common_tags
-  bucket_name = lower("${local.deployment_name}-ngnix-bucket")
+  bucket_name = lower("${var.deployment_name}-ngnix-bucket")
   acl_value = var.acl_value
   ami_id = var.ami_id
   azs = var.azs
