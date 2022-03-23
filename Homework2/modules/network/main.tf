@@ -83,7 +83,7 @@ resource "aws_security_group_rule" "ingress_rule_for_alb" {
 # Private
 ##############################
 resource "aws_eip" "nat" {
-  count =  length(var.azs)
+  count = length(var.private_subnets)
 
   vpc = true
 
@@ -95,7 +95,7 @@ resource "aws_eip" "nat" {
 }
 
 resource "aws_nat_gateway" "tally-nat-gw" {
-  count =   length(var.azs)
+  count =  length(var.private_subnets)
 
   allocation_id = element( split(",",  join(",", aws_eip.nat.*.id), ), count.index)
   subnet_id = element(var.public_subnets.*.id,
@@ -111,7 +111,7 @@ resource "aws_nat_gateway" "tally-nat-gw" {
 }
 
 resource "aws_route_table" "tally-private-rt" {
-  count =  length(var.azs)
+  count =  length(var.private_subnets)
 
   vpc_id = var.vpc_id
 
@@ -135,7 +135,7 @@ resource "aws_route_table_association" "tally-rt-private-subnet" {
 }
 
 resource "aws_route" "private_nat_gateway" {
-  count =  length(var.azs)
+  count =  length(var.private_subnets)
 
   route_table_id         = element(aws_route_table.tally-private-rt.*.id, count.index)
   destination_cidr_block = "0.0.0.0/0"

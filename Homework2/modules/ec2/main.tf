@@ -88,7 +88,6 @@ resource "aws_instance" "db_server" {
 
 resource "aws_ebs_volume" "web_volume" {
   count = var.web_instance_count
-  #availability_zone = "eu-west-1a"
   availability_zone = var.azs[count.index]
   encrypted   = true
   type = "gp2"

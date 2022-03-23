@@ -23,6 +23,7 @@ module "create_network" {
 module "create_iam" {
   source = "./modules/iam"
   bucket_name = lower("${var.deployment_name}-bucket")
+  deployment_name = var.deployment_name
 }
 
 
