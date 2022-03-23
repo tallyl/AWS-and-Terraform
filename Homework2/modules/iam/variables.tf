@@ -1,7 +1,5 @@
 
-variable "deployment_name" {
-  default = "opsschool-HW-three"
-}
+variable "deployment_name" {}
 variable "bucket_name" {}
 
 
