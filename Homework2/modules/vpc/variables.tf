@@ -2,10 +2,7 @@
 //  default = "eu-west-1"
 //}
 
-variable "deployment_name" {
-  default = "opsschool-HW-three"
-}
-
+variable "deployment_name" {}
 variable "vpc_cidr_block" {}
 variable "public_subnets" {}
 variable "azs" {}
