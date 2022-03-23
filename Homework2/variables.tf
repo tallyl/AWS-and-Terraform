@@ -4,13 +4,13 @@ variable "instance_name" {
   default     = "ExampleAppServerInstance"
 }
 
-variable "profile" {
-  default = "opsschool"
-}
+//variable "profile" {
+//  default = "opsschool"
+//}
 
-variable "aws_role_arn" {
-  default = "role_arn = arn:aws:iam::776404332921:role/traiana-terraform-iam-role"
-}
+//variable "aws_role_arn" {
+//  default = "role_arn = arn:aws:iam::776404332921:role/traiana-terraform-iam-role"
+//}
 
 variable instance_type {
   default ="t3.micro"
@@ -32,20 +32,6 @@ variable "web_ebs_volume_size" {
 variable "vpc_cidr_block" {
   default       = "10.0.0.0/16"
 }
-
-//variable "logs_bucket_name" {
-//}
-# Example :
-/* variable "AMI" {
-    type = "map"
-
-    default {
-        eu-west-2 = "ami-03dea29b0216a1e03"
-        us-east-1 = "ami-0c2a1acae6667e438"
-    }
- }
- ami = "${lookup(var.AMI, var.AWS_REGION)}"
- */
 
 variable "region" {
   default = "eu-west-1"
@@ -85,7 +71,7 @@ variable "forwarding_config" {
 }*/
 
 variable "deployment_name" {
-  default = "opsschool-HW-three"
+  default = "tally-AWS-TF"
 }
 
 variable "common_tags" {
@@ -131,8 +117,8 @@ variable "acl_value" {
 }
 
 
-locals {
-  deployment_name="opsschool-HW-two"
+//locals {
+//  deployment_name="tally-AWS-TF"
 
     # security ingress rule
   /*sg_ingress_rules = [
