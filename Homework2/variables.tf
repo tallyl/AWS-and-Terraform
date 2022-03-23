@@ -38,17 +38,22 @@ variable "region" {
 }
 
 
+
+data "aws_availability_zones" "available" {
+  state = "available"
+}
+
 variable "public_subnets" {
   description = "A list of public subnets inside the VPC"
   type        = list(string)
   default     = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
 }
 
-variable "azs" {
-  description = "A list of availability zones  inside the VPC"
-  type        = list(string)
-  default     = ["eu-west-1a", "eu-west-1b", "eu-west-1c"]
-}
+//variable "azs" {
+//  description = "A list of availability zones  inside the VPC"
+//  type        = list(string)
+//  default     = ["us-east-1a", "us-east-1b", "eu-west-1c"]
+//}
 
 variable "private_subnets" {
   description = "A list of public subnets inside the VPC"

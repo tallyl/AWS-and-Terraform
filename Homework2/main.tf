@@ -5,14 +5,14 @@ module "create_vpc" {
   public_subnets = var.public_subnets
   vpc_cidr_block = var.vpc_cidr_block
   deployment_name = var.deployment_name
-  azs = var.azs
+  azs = data.aws_availability_zones.available.names
 }
 
 module "create_network" {
   source = "./modules/network"
   common_tags = var.common_tags
   sg_ingress_rules = var.sg_ingress_rules
-  azs = var.azs
+  azs = data.aws_availability_zones.available.names
   private_subnets = module.create_vpc.private_subnet
   public_subnets = module.create_vpc.public_subnet
   deployment_name = var.deployment_name
@@ -39,7 +39,7 @@ module "ec2_app" {
   bucket_name = lower("${var.deployment_name}-ngnix-bucket")
   acl_value = var.acl_value
   ami_id = var.ami_id
-  azs = var.azs
+  azs = data.aws_availability_zones.available.names
   private_subnets = var.private_subnets
   public_subnets = var.public_subnets
   iam_instance_profile = module.create_iam.s3_ngnix_ec2_role
