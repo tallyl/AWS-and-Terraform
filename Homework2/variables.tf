@@ -17,7 +17,7 @@ variable instance_type {
 }
 
 variable "ami_id" {
-  default="ami-0000bebe516f304b1"
+  default="ami-0004558ff67e36bb"
 }
 
 variable "web_instance_count" {
