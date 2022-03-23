@@ -12,13 +12,16 @@ resource "aws_key_pair" "ssh_key" {
 
 resource "aws_s3_bucket" "logs_bucket" {
     bucket = lower(var.bucket_name)
-    acl = var.acl_value
-
 
   tags = merge(
     var.common_tags, {"Name" = var.bucket_name}
           )
 
+}
+
+resource "aws_s3_bucket_acl" "example" {
+  bucket = aws_s3_bucket.logs_bucket.id
+  acl    = var.acl_value
 }
 
 # ------------------------------------
