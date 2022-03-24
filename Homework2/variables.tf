@@ -17,7 +17,7 @@ variable instance_type {
 }
 
 variable create_lb {
-  default = 0
+  default = false
 }
 
 variable "ami_id" {
