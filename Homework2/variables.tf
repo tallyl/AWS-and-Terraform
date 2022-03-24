@@ -69,12 +69,16 @@ variable "private_subnets" {
   default     = ["10.0.10.0/24", "10.0.20.0/24", "10.0.30.0/24"]
 }
 
-
+// to disable nlb
 variable "forwarding_config" {
-  default = {
-      80        =   "HTTP"
-  }
+  default = {}
 }
+
+//variable "forwarding_config" {
+//  default = {
+//      80        =   "HTTP"
+//  }
+//}
 
 /*variable "forwarding_config" {
   default = {
