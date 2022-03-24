@@ -33,7 +33,7 @@ variable "db_instance_count" {
 }
 
 variable "web_ebs_volume_size" {
-  default = "10"
+  default = "1"
 }
 
 
