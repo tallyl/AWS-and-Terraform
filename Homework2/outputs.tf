@@ -19,20 +19,20 @@ output "dbserver_private_ip" {
   value       = module.ec2_app.dbserver_private_ip
 }
 
-output "nlb_access_ip" {
-  value = module.create_alb.nlb_access_ip
-}
+//output "nlb_access_ip" {
+//  value = module.create_alb.nlb_access_ip
+//}
 
 output "vpc_id" {
   value = module.create_vpc.vpc_id
 }
 
-output "nlb_dns" {
-  value = module.create_alb.nlb_access_ip
-}
+//output "nlb_dns" {
+//  value = module.create_alb.nlb_access_ip
+//}
 
-output "alb_sg" {
-  value = module.create_alb.alb_sg
-}
+//output "alb_sg" {
+//  value = module.create_alb.alb_sg
+//}
 
 
