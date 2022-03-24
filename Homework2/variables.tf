@@ -16,6 +16,10 @@ variable instance_type {
   default ="t3.micro"
 }
 
+variable create_lb {
+  default = 0
+}
+
 variable "ami_id" {
   default="ami-0004558ff67e36bb8"
 }
@@ -24,8 +28,12 @@ variable "web_instance_count" {
   default = "2"
 }
 
+variable "db_instance_count" {
+  default = "0"
+}
+
 variable "web_ebs_volume_size" {
-  default = "10"
+  default = "1"
 }
 
 

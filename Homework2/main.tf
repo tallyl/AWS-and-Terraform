@@ -33,6 +33,7 @@ module "ec2_app" {
   deployment_name = var.deployment_name
   web_ebs_volume_size = var.web_ebs_volume_size
   web_instance_count = var.web_instance_count
+  db_instance_count = var.db_instance_count
   public_subnet_ids = module.create_vpc.public_subnet
   web_sg = module.create_network.nginix_sg_id
   private_subnet_ids = module.create_vpc.private_subnet
@@ -48,7 +49,7 @@ module "ec2_app" {
 
 module "create_alb" {
   source ="./modules/alb"
-
+  create_lb = var.create_lb
   deployment_name = var.deployment_name
   forwarding_config = var.forwarding_config
   web_servers = module.ec2_app.web_server

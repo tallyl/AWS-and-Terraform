@@ -11,6 +11,7 @@ variable "vpc_id" {}
 variable "web_servers" {}
 variable "sg_rules" {}
 variable "forwarding_config" {}
+variable "create_lb" {}
 
 
 

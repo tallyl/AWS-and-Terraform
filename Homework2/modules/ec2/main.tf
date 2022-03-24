@@ -71,7 +71,7 @@ resource "aws_instance" "web_server" {
 
 
 resource "aws_instance" "db_server" {
-  count                  = var.web_instance_count
+  count         = var.db_instance_count
   ami           = var.ami_id
   instance_type = var.instance_type
   ebs_optimized = true

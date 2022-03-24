@@ -1,5 +1,6 @@
 
 resource "aws_lb" "public_load_balancer" {
+  count = var.create_lb ? 1: 0
   name               = "${var.deployment_name}--nlb"
   load_balancer_type = "application"
   enable_cross_zone_load_balancing = true
@@ -21,7 +22,7 @@ resource "aws_lb" "public_load_balancer" {
 
 
 resource "aws_lb_listener" "lb_listener" {
-  //count             = length(var.nlb_ports)
+  count = var.create_lb ? 1: 0
   for_each = var.forwarding_config
   load_balancer_arn = aws_lb.public_load_balancer.arn
   port              = each.key
@@ -41,6 +42,7 @@ resource "aws_lb_listener" "lb_listener" {
 
 
 resource "aws_lb_target_group" "tg" {
+  count = var.create_lb ? 1: 0
   for_each = var.forwarding_config
     name                  = "${var.deployment_name}-${each.key}--tg"
     port                  = each.key
@@ -71,6 +73,7 @@ resource "aws_lb_target_group" "tg" {
 }
 
 resource "aws_alb_target_group_attachment" "target_group" {
+  count = var.create_lb ? 1: 0
   for_each = {
     for pair in setproduct(keys(var.forwarding_config ),range(length(var.web_servers))) : "${pair[0]} ${pair[1]}" => {
       target_group_arn = pair[0]
@@ -83,6 +86,7 @@ resource "aws_alb_target_group_attachment" "target_group" {
 
 
 resource "aws_security_group" "alb_sg" {
+  count = var.create_lb ? 1: 0
   name_prefix	= "${var.deployment_name}-alb-sg-"
   vpc_id	    = var.vpc_id
   description	= "${var.deployment_name}-alb-sg"
@@ -94,6 +98,7 @@ resource "aws_security_group" "alb_sg" {
 }
 
 resource "aws_security_group_rule" "egress_rule" {
+  count = var.create_lb ? 1: 0
   type              = "egress"
   description       = "allow outbound traffic to anywhere"
   from_port         = 0
