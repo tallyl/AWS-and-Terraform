@@ -83,7 +83,6 @@ resource "aws_alb_target_group_attachment" "target_group" {
 
 
 resource "aws_security_group" "alb_sg" {
-  count = var.create_lb ? 1: 0
   name_prefix	= "${var.deployment_name}-alb-sg-"
   vpc_id	    = var.vpc_id
   description	= "${var.deployment_name}-alb-sg"
@@ -95,7 +94,6 @@ resource "aws_security_group" "alb_sg" {
 }
 
 resource "aws_security_group_rule" "egress_rule" {
-  count = var.create_lb ? 1: 0
   type              = "egress"
   description       = "allow outbound traffic to anywhere"
   from_port         = 0
@@ -106,7 +104,6 @@ resource "aws_security_group_rule" "egress_rule" {
 }
 
 resource "aws_security_group_rule" "ingress_rule" {
-  count = var.create_lb ? 1: 0
   type              = "ingress"
   description       = lookup(var.sg_rules, "description")
   from_port         = lookup(var.sg_rules, "from_port")
