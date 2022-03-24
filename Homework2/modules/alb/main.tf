@@ -22,7 +22,6 @@ resource "aws_lb" "public_load_balancer" {
 
 
 resource "aws_lb_listener" "lb_listener" {
-  count = var.create_lb ? 1: 0
   for_each = var.forwarding_config
   load_balancer_arn = aws_lb.public_load_balancer.arn
   port              = each.key
@@ -42,7 +41,6 @@ resource "aws_lb_listener" "lb_listener" {
 
 
 resource "aws_lb_target_group" "tg" {
-  count = var.create_lb ? 1: 0
   for_each = var.forwarding_config
     name                  = "${var.deployment_name}-${each.key}--tg"
     port                  = each.key
@@ -73,7 +71,6 @@ resource "aws_lb_target_group" "tg" {
 }
 
 resource "aws_alb_target_group_attachment" "target_group" {
-  count = var.create_lb ? 1: 0
   for_each = {
     for pair in setproduct(keys(var.forwarding_config ),range(length(var.web_servers))) : "${pair[0]} ${pair[1]}" => {
       target_group_arn = pair[0]
@@ -109,6 +106,7 @@ resource "aws_security_group_rule" "egress_rule" {
 }
 
 resource "aws_security_group_rule" "ingress_rule" {
+  count = var.create_lb ? 1: 0
   type              = "ingress"
   description       = lookup(var.sg_rules, "description")
   from_port         = lookup(var.sg_rules, "from_port")
