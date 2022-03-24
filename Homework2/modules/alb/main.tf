@@ -23,7 +23,7 @@ resource "aws_lb" "public_load_balancer" {
 
 resource "aws_lb_listener" "lb_listener" {
   for_each = var.forwarding_config
-  load_balancer_arn = aws_lb.public_load_balancer.arn
+  load_balancer_arn = aws_lb.public_load_balancer[0].arn
   port              = each.key
   protocol          = each.value
 
@@ -102,7 +102,7 @@ resource "aws_security_group_rule" "egress_rule" {
   to_port           = 0
   protocol          = "-1"
   cidr_blocks       = ["0.0.0.0/0"]
-  security_group_id = aws_security_group[count.index].alb_sg.id
+  security_group_id = aws_security_group.alb_sg[count.index].id
 }
 
 resource "aws_security_group_rule" "ingress_rule" {
