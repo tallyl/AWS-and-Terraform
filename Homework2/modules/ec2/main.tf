@@ -62,6 +62,14 @@ resource "aws_instance" "web_server" {
   associate_public_ip_address = true
   iam_instance_profile = var.iam_instance_profile
 
+  root_block_device = [
+        {
+            volume_type = "gp2"
+            volume_size = 1
+            encrypted   = true
+        },
+    ]
+
   tags = merge(
     var.common_tags, {"Name" = "${var.deployment_name}-webserver_${count.index}"}
 
@@ -80,6 +88,13 @@ resource "aws_instance" "db_server" {
   #user_data              = data.template_cloudinit_config.user_data.rendered
   vpc_security_group_ids = [var.web_sg]
 
+  root_block_device = [
+        {
+            volume_type = "gp2"
+            volume_size = 1
+            encrypted   = true
+        },
+    ]
   tags = merge(
     var.common_tags, {"Name" = "${var.deployment_name}-dbserver_${count.index}"}
     )
