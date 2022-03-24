@@ -21,6 +21,8 @@ variable "deployment_name" {}
 
 variable "web_instance_count" {}
 
+variable "db_instance_count" {}
+
 variable "web_ebs_volume_size" {}
 
 variable "public_subnets" {}
