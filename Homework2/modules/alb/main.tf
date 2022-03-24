@@ -6,7 +6,7 @@ resource "aws_lb" "public_load_balancer" {
   enable_cross_zone_load_balancing = true
   internal = false
   subnets = var.public_subnets[*].id
-  security_groups = [aws_security_group.alb_sg.id]
+  security_groups = [aws_security_group.alb_sg[count.index].id]
   idle_timeout = 60
 
   //  subnet_mapping {
@@ -102,7 +102,7 @@ resource "aws_security_group_rule" "egress_rule" {
   to_port           = 0
   protocol          = "-1"
   cidr_blocks       = ["0.0.0.0/0"]
-  security_group_id = aws_security_group.alb_sg.id
+  security_group_id = aws_security_group[count.index].alb_sg.id
 }
 
 resource "aws_security_group_rule" "ingress_rule" {
@@ -113,7 +113,7 @@ resource "aws_security_group_rule" "ingress_rule" {
   to_port           = lookup(var.sg_rules, "to_port")
   protocol          = lookup(var.sg_rules, "protocol")
   cidr_blocks       = lookup(var.sg_rules, "cidr_blocks")
-  security_group_id = aws_security_group.alb_sg.id
+  security_group_id = aws_security_group.alb_sg[count.index].id
 }
 
 
